@@ -1,0 +1,16 @@
+@font-face {
+	font-family: "PRINT";
+	src: url("../../rsx/fonts/print.ttf");
+}
+
+:root {
+	--print-font-family: "PRINT", "Courier New", Courier, monospace;
+	--print-font-size: 32px;
+	--print-green: #41ff00;
+}
+
+.frame-body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}

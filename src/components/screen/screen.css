@@ -1,0 +1,50 @@
+#screen {
+	height: 100%;
+	padding: 4px;
+	box-sizing: border-box;
+	overflow: hidden;
+	filter: blur(0.5px);
+}
+
+.screen-output {
+	position: relative;
+	user-select: none;
+	text-transform: uppercase;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.screen-output-color-red {
+	color: red;
+}
+
+.screen-input {
+	background-color: black;
+	border-style: none;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	text-shadow: inherit;
+	text-transform: uppercase;
+	padding: 0;
+	height: 24px;
+	width: 580px;
+	user-select: none;
+	cursor: inherit;
+}
+
+.screen-prompt {
+	outline: none;
+	text-transform: uppercase;
+	white-space: pre;
+}
+
+.screen-prompt > .screen-prompt-selected > span {
+	background-color: var(--print-green);
+	color: black;
+}
+
+/* Removes blueish border around input element. */
+.screen-input:focus {
+	outline: none;
+}

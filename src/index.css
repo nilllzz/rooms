@@ -1,0 +1,38 @@
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	position: relative;
+}
+
+.main-frame {
+	width: 640px;
+	height: 480px;
+	border-style: solid;
+	border-color: var(--print-green);
+	border-width: 1px;
+	z-index: 1;
+}
+
+.loading-overlay {
+	width: 640px;
+	height: 480px;
+	position: absolute;
+	background-color: black;
+	padding: 4px;
+	box-sizing: border-box;
+	z-index: 2;
+	cursor: none;
+	user-select: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	filter: blur(0.5px);
+}

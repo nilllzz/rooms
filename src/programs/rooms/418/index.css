@@ -1,0 +1,26 @@
+body {
+	cursor: none;
+}
+
+.container {
+	position: relative;
+	filter: blur(0.5px);
+}
+
+.img {
+	display: block;
+	filter: grayscale(0.2) blur(0.5px) hue-rotate(80deg) saturate(2)
+		grayscale(0.5) brightness(0.5);
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.content {
+	position: relative;
+	padding: 4px;
+	z-index: 2;
+}

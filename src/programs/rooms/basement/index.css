@@ -1,0 +1,7 @@
+body {
+	cursor: none;
+}
+
+body > canvas {
+	filter: blur(0.5px);
+}
