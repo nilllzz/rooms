@@ -42,7 +42,42 @@ class PrgAuth {
 			redo = result === "REDO";
 		} while (redo);
 
-		// Create key from input.
+		let hasAccess = false;
+		let hasGJAccess = await this.doGJAuth(user, pass);
+		if (hasGJAccess === null) {
+			hasAccess = await this.doPasswdAuth(user, pass);
+		} else {
+			hasAccess = hasGJAccess;
+		}
+
+		if (!hasAccess) {
+			await this.screen.print(
+				"INCORRECT CREDENTIALS\nPRESS ENTER TO RESET\n"
+			);
+			await this.screen.readLine();
+			await Messaging.post({ instruction: "reset" }, false);
+			return;
+		}
+
+		if (hasGJAccess) {
+			await Messaging.post({
+				instruction: "gjcreds",
+				command: "sync-down",
+				args: {},
+			});
+		}
+
+		await Messaging.post(
+			{
+				instruction: "load",
+				target: "chronos",
+			},
+			false
+		);
+	}
+
+	async doPasswdAuth(user, pass) {
+		console.log("do password auth");
 		const keyInput = user + ":" + pass;
 		const keyOutput = await Common.getHash(keyInput);
 
@@ -53,21 +88,24 @@ class PrgAuth {
 			args: { path: ["SECRET", "PASSWD"] },
 		});
 
-		if (keyOutput.toUpperCase() !== passwdContent.toUpperCase()) {
-			await this.screen.print(
-				"INCORRECT CREDENTIALS\nPRESS ENTER TO RESET\n"
-			);
-			await this.screen.readLine();
-			await Messaging.post({ instruction: "reset" }, false);
-			return;
-		}
+		console.log(passwdContent, keyOutput);
 
-		await Messaging.post(
-			{
-				instruction: "load",
-				target: "chronos",
-			},
-			false
+		return keyOutput.toUpperCase() === passwdContent.toUpperCase();
+	}
+
+	async doGJAuth(user, pass) {
+		const gjCreds = await Messaging.post({
+			instruction: "gjcreds",
+			command: "read",
+			args: {},
+		});
+
+		if (!gjCreds.user || !gjCreds.pass) {
+			return null;
+		}
+		return (
+			gjCreds.user.toUpperCase() === user.toUpperCase() &&
+			gjCreds.pass.toUpperCase() === pass.toUpperCase()
 		);
 	}
 }

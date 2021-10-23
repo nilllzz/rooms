@@ -97,7 +97,7 @@ setInterval(() => {
 }, 100);
 
 // Register loader message event handler.
-window.onmessage = function (e) {
+window.onmessage = async function (e) {
 	// Only react to messages with the correct Messaging format.
 	if (!e.data["message-id"] || !e.data["message-data"]) {
 		return;
@@ -126,6 +126,12 @@ window.onmessage = function (e) {
 				break;
 			case "io":
 				responseData = IO.runCommand(data.command, data.args);
+				break;
+			case "gjcreds":
+				responseData = await GJIntegration.runCommand(
+					data.command,
+					data.args
+				);
 				break;
 		}
 	} catch (error) {
@@ -159,6 +165,9 @@ window.onmessage = function (e) {
 const frame = document.getElementById("main-frame");
 frame.focus();
 frame.onload = () => onMainframeLoaded();
+
+// Load GJ Credentials (if they are set) from frame location.
+GJIntegration.init();
 
 // Start by showing auth.
 load("auth");
