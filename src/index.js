@@ -128,10 +128,16 @@ window.onmessage = async function (e) {
 				responseData = IO.runCommand(data.command, data.args);
 				break;
 			case "gjcreds":
-				responseData = await GJIntegration.runCommand(
+				responseData = await GJCreds.runCommand(
 					data.command,
 					data.args
 				);
+				break;
+			case "gjapi":
+				responseData = await GJApi.runCommand(data.command, data.args);
+				break;
+			case "net":
+				responseData = await Net.runCommand(data.command, data.args);
 				break;
 		}
 	} catch (error) {
@@ -167,7 +173,7 @@ frame.focus();
 frame.onload = () => onMainframeLoaded();
 
 // Load GJ Credentials (if they are set) from frame location.
-GJIntegration.init();
+GJCreds.init();
 
 // Start by showing auth.
 load("auth");

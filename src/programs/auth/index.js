@@ -60,11 +60,24 @@ class PrgAuth {
 		}
 
 		if (hasGJAccess) {
-			await Messaging.post({
-				instruction: "gjcreds",
-				command: "sync-down",
+			await this.screen.print(
+				"CONNECTING TO REMOTE ORIGIN\n" + user + "...\n"
+			);
+
+			const didSync = await Messaging.post({
+				instruction: "net",
+				command: "sync-io-down",
 				args: {},
 			});
+			// If no down sync could be down, there is probably no data
+			// on GJ for the current user. Sync up now.
+			if (!didSync) {
+				await Messaging.post({
+					instruction: "net",
+					command: "sync-io-up",
+					args: {},
+				});
+			}
 		}
 
 		await Messaging.post(
@@ -77,7 +90,6 @@ class PrgAuth {
 	}
 
 	async doPasswdAuth(user, pass) {
-		console.log("do password auth");
 		const keyInput = user + ":" + pass;
 		const keyOutput = await Common.getHash(keyInput);
 
