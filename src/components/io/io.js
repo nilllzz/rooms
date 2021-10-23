@@ -10,13 +10,17 @@ class IOClass {
 	_createLS() {
 		const data = localStorage.getItem(__IO_LOCAL_STORAGE);
 		if (data === null) {
-			this.data = this._createInitial();
-			this._saveLS();
+			this.overwriteLS(this._createInitial());
 		} else {
 			this.data = JSON.parse(data);
 		}
 
-		console.log(this.data);
+		console.log("Loaded IO storage", this.data);
+	}
+
+	overwriteLS(data) {
+		this.data = data;
+		this._saveLS();
 	}
 
 	_createInitial() {

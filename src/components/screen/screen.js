@@ -143,6 +143,7 @@ class SScreen {
 		return new Promise(async (resolve) => {
 			// Create an "input" element to read text from until the user presses "Enter".
 			const lineReader = document.createElement("input");
+			lineReader.autocomplete = "off";
 			lineReader.setAttribute("data-screen-input", "1");
 			lineReader.setAttribute("data-screen-reader", "1");
 			lineReader.className = "screen-input";

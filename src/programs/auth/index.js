@@ -42,7 +42,54 @@ class PrgAuth {
 			redo = result === "REDO";
 		} while (redo);
 
-		// Create key from input.
+		let hasAccess = false;
+		let hasGJAccess = await this.doGJAuth(user, pass);
+		if (hasGJAccess === null) {
+			hasAccess = await this.doPasswdAuth(user, pass);
+		} else {
+			hasAccess = hasGJAccess;
+		}
+
+		if (!hasAccess) {
+			await this.screen.print(
+				"INCORRECT CREDENTIALS\nPRESS ENTER TO RESET\n"
+			);
+			await this.screen.readLine();
+			await Messaging.post({ instruction: "reset" }, false);
+			return;
+		}
+
+		if (hasGJAccess) {
+			await this.screen.print(
+				"CONNECTING TO REMOTE ORIGIN\n" + user + "...\n"
+			);
+
+			const didSync = await Messaging.post({
+				instruction: "net",
+				command: "sync-io-down",
+				args: {},
+			});
+			// If no down sync could be down, there is probably no data
+			// on GJ for the current user. Sync up now.
+			if (!didSync) {
+				await Messaging.post({
+					instruction: "net",
+					command: "sync-io-up",
+					args: {},
+				});
+			}
+		}
+
+		await Messaging.post(
+			{
+				instruction: "load",
+				target: "chronos",
+			},
+			false
+		);
+	}
+
+	async doPasswdAuth(user, pass) {
 		const keyInput = user + ":" + pass;
 		const keyOutput = await Common.getHash(keyInput);
 
@@ -53,21 +100,24 @@ class PrgAuth {
 			args: { path: ["SECRET", "PASSWD"] },
 		});
 
-		if (keyOutput.toUpperCase() !== passwdContent.toUpperCase()) {
-			await this.screen.print(
-				"INCORRECT CREDENTIALS\nPRESS ENTER TO RESET\n"
-			);
-			await this.screen.readLine();
-			await Messaging.post({ instruction: "reset" }, false);
-			return;
-		}
+		console.log(passwdContent, keyOutput);
 
-		await Messaging.post(
-			{
-				instruction: "load",
-				target: "chronos",
-			},
-			false
+		return keyOutput.toUpperCase() === passwdContent.toUpperCase();
+	}
+
+	async doGJAuth(user, pass) {
+		const gjCreds = await Messaging.post({
+			instruction: "gjcreds",
+			command: "read",
+			args: {},
+		});
+
+		if (!gjCreds.user || !gjCreds.pass) {
+			return null;
+		}
+		return (
+			gjCreds.user.toUpperCase() === user.toUpperCase() &&
+			gjCreds.pass.toUpperCase() === pass.toUpperCase()
 		);
 	}
 }
