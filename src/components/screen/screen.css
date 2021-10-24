@@ -18,6 +18,10 @@
 	color: red;
 }
 
+.screen-output-color-white {
+	color: rgb(180, 240, 180);
+}
+
 .screen-input {
 	background-color: black;
 	border-style: none;

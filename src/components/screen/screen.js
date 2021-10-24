@@ -372,10 +372,10 @@ class SScreen {
 	}
 
 	/**
-	 * Shows waiting animation for the given time period.
-	 * @param {number} time Time to wait. `10` => 1s.
+	 * Shows waiting animation until the passed in promise resolves.
+	 * @param {Promise} promise
 	 */
-	wait(time, options = {}) {
+	wait(promise, options = {}) {
 		// Cannot wait when muted.
 		if (this.isMuted) {
 			return;
@@ -388,36 +388,60 @@ class SScreen {
 		// Prints to the current section.
 		const section = this._getCurrentSection();
 
-		let timeLeft = time;
+		let elapsedTime = 0;
 
 		// Create element and add to section.
 		const waitEl = inline
 			? document.createElement("span")
 			: document.createElement("div");
 		waitEl.className = "screen-wait";
-		waitEl.textContent = waitChars[timeLeft % 4];
+		waitEl.textContent = waitChars[elapsedTime % 4];
 
 		section.appendChild(waitEl);
 
-		return new Promise((resolve) => {
+		return new Promise(async (resolve) => {
+			// Set up wait animation.
 			const waitHandle = setInterval(() => {
-				// Decrease wait time and update element accordingly.
-				timeLeft--;
-				waitEl.textContent = waitChars[timeLeft % 4];
-
-				// Cleanup and resolve once no more time left to wait.
-				if (timeLeft == 0) {
-					clearInterval(waitHandle);
-
-					// Only remove the waiting animation element when requested.
-					if (cleanup) {
-						waitEl.remove();
-					}
-
-					resolve();
-				}
+				// Increase time elapsed and update element accordingly.
+				elapsedTime++;
+				waitEl.textContent = waitChars[elapsedTime % 4];
 			}, 100);
+
+			// Spin until passed in promise resolves. The wait animation
+			// plays in the meanwhile.
+			const promiseResult = await promise;
+
+			// Stop wait animation by clearning the interval.
+			clearInterval(waitHandle);
+
+			// Remove the now standstill waiting animation element (if requested).
+			if (cleanup) {
+				waitEl.remove();
+			}
+
+			// Return control back to caller.
+			// Returned is the result of the passed in promise.
+			resolve(promiseResult);
 		});
+	}
+
+	/**
+	 * Shows waiting animation for the given time period.
+	 * @param {number} time Time to wait. `10` => 1s.
+	 */
+	fakeWait(time, options = {}) {
+		// Create a promise that resolves after the wait time is over.
+		const promise = new Promise((resolve) => {
+			setTimeout(
+				() => {
+					resolve();
+				},
+				// Multiply input time by 100 to make it in sync with the animation step.
+				time * 100
+			);
+		});
+
+		return this.wait(promise, options);
 	}
 
 	setMuted(muted) {

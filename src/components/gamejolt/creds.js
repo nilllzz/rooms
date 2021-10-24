@@ -17,6 +17,7 @@ class GJCredsClass {
 				return {
 					user: this.username,
 					pass: this.token,
+					id: this.userId,
 				};
 		}
 	}

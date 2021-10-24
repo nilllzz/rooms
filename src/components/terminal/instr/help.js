@@ -30,7 +30,7 @@ Terminal.LOADED_INSTRUCTIONS[__instr__help__name] = async function (prg, args) {
 			{ speed: 10 }
 		);
 
-		await prg.terminal.screen.wait(7);
+		await prg.terminal.screen.fakeWait(7);
 
 		const helpText = __instr__help__glossary[term] ?? null;
 		if (helpText) {

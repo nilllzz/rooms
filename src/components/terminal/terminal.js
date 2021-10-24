@@ -56,6 +56,17 @@ class Terminal {
 					speed: 15,
 				});
 				await this.screen.print("INPUT..............OK", { speed: 15 });
+
+				const creds = await Messaging.post({
+					instruction: "gjcreds",
+					command: "read",
+					args: {},
+				});
+				const netStatus = creds.id ?? "LOCALNET";
+				await this.screen.print("NET ID............." + netStatus, {
+					speed: 15,
+				});
+
 				await this.screen.print("\n", { speed: 15 });
 			}
 

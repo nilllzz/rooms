@@ -7,15 +7,27 @@ class IOClass {
 		this._createLS();
 	}
 
+	_getStorageUserId() {
+		return GJCreds.userId ?? 0;
+	}
+
+	_getLSKey() {
+		return this._getStorageUserId() + "-" + __IO_LOCAL_STORAGE;
+	}
+
 	_createLS() {
-		const data = localStorage.getItem(__IO_LOCAL_STORAGE);
+		const data = localStorage.getItem(this._getLSKey());
 		if (data === null) {
 			this.overwriteLS(this._createInitial());
 		} else {
 			this.data = JSON.parse(data);
 		}
 
-		console.log("Loaded IO storage", this.data);
+		console.log(
+			"Loaded CHRONOS IO storage",
+			this._getStorageUserId(),
+			this.data
+		);
 	}
 
 	overwriteLS(data) {
@@ -82,7 +94,7 @@ class IOClass {
 	}
 
 	_saveLS() {
-		localStorage.setItem(__IO_LOCAL_STORAGE, JSON.stringify(this.data));
+		localStorage.setItem(this._getLSKey(), JSON.stringify(this.data));
 	}
 
 	_getObjForPath(path = [], obj = null) {

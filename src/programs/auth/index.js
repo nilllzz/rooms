@@ -44,7 +44,7 @@ class PrgAuth {
 
 		let hasAccess = false;
 		let hasGJAccess = await this.doGJAuth(user, pass);
-		if (hasGJAccess === null) {
+		if (!hasGJAccess) {
 			hasAccess = await this.doPasswdAuth(user, pass);
 		} else {
 			hasAccess = hasGJAccess;
@@ -60,24 +60,66 @@ class PrgAuth {
 		}
 
 		if (hasGJAccess) {
-			await this.screen.print(
-				"CONNECTING TO REMOTE ORIGIN\n" + user + "...\n"
+			this.screen.clear();
+			await this.screen.print("CONNECTING TO REMOTE ORIGIN\n" + user);
+
+			const didSync = await this.screen.wait(
+				Messaging.post({
+					instruction: "net",
+					command: "sync-io-down",
+					args: {},
+				}),
+				{
+					inline: true,
+				}
 			);
 
-			const didSync = await Messaging.post({
-				instruction: "net",
-				command: "sync-io-down",
-				args: {},
-			});
+			await this.screen.print(
+				"----------------------------------------",
+				{ speed: 5 }
+			);
+			await this.screen.print("CONNECTED.");
+
 			// If no down sync could be down, there is probably no data
 			// on GJ for the current user. Sync up now.
 			if (!didSync) {
-				await Messaging.post({
-					instruction: "net",
-					command: "sync-io-up",
-					args: {},
-				});
+				await this.screen.print(
+					"----------------------------------------",
+					{ speed: 5 }
+				);
+				await this.screen.print("SETTING UP ENVIRONMENT");
+				await this.screen.wait(
+					Messaging.post({
+						instruction: "net",
+						command: "sync-io-up",
+						args: {},
+					})
+				);
 			}
+
+			await this.screen.print(
+				"----------------------------------------",
+				{ speed: 5 }
+			);
+			await this.screen.print("IMPORTANT:", {
+				color: "white",
+				speed: 50,
+			});
+			await this.screen.print(
+				'TO SAVE DATA TO THE REMOTE ORIGIN,\nRUN "NET SYNC UP".',
+				{
+					color: "white",
+					speed: 50,
+				}
+			);
+
+			await this.screen.print(
+				"----------------------------------------",
+				{ speed: 5 }
+			);
+			await this.screen.print("\nPRESS ENTER TO CONTINUE");
+
+			await this.screen.readLine();
 		}
 
 		await Messaging.post(
@@ -99,8 +141,6 @@ class PrgAuth {
 			command: "read",
 			args: { path: ["SECRET", "PASSWD"] },
 		});
-
-		console.log(passwdContent, keyOutput);
 
 		return keyOutput.toUpperCase() === passwdContent.toUpperCase();
 	}
