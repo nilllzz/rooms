@@ -1,0 +1,10 @@
+.shutdown-message {
+	color: rgb(239, 131, 0);
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	filter: blur(0.5px);
+	user-select: none;
+}

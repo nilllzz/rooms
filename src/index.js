@@ -121,6 +121,9 @@ window.onmessage = async function (e) {
 			case "halt":
 				halt();
 				break;
+			case "shutdown":
+				load("shutdown");
+				break;
 			case "reset":
 				reset();
 				break;
@@ -178,3 +181,4 @@ GJCreds.init();
 // Start by showing auth.
 load("auth");
 //load("rooms/basement");
+// load("shutdown");

@@ -37,7 +37,20 @@ class PrgAuth {
 			});
 
 			await this.screen.print("\n");
-			const result = await this.screen.prompt(["LOGIN", "REDO", "RESET"]);
+			const result = await this.screen.prompt([
+				"LOGIN",
+				"REDO",
+				"RESET",
+				"SHUTDOWN",
+			]);
+
+			if (result === "RESET") {
+				await Messaging.post({ instruction: "reset" }, false);
+				return;
+			} else if (result === "SHUTDOWN") {
+				await Messaging.post({ instruction: "shutdown" }, false);
+				return;
+			}
 
 			redo = result === "REDO";
 		} while (redo);
