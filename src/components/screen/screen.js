@@ -157,11 +157,40 @@ class SScreen {
 			// Focus it so the user can type.
 			lineReader.focus();
 
+			// Special handling for password inputs.
+			// Because the HTML password input sucks, we are cheating and using
+			// a normal input field.
+			let targetValue = "";
+			if (password) {
+				// Stop any normal keypress input and paste a * char instead.
+				lineReader.addEventListener("keypress", (e) => {
+					if (
+						e.key.length === 1 &&
+						lineReader.value.length < length
+					) {
+						// Store the actual field's value in the background.
+						targetValue += e.key;
+						lineReader.value += "*";
+					}
+					e.preventDefault();
+					return false;
+				});
+				// On any other input type, overwrite the targetValue and replace
+				// the actual content of the field with * chars.
+				lineReader.addEventListener("input", (e) => {
+					targetValue = e.target.value;
+					const newValue = "*"
+						.repeat(e.target.value.length)
+						.substr(0, length);
+					lineReader.value = newValue;
+				});
+			}
+
 			lineReader.addEventListener("keydown", (e) => {
 				// When the user presses "Enter" remove the input,
 				// render the input to the screen instead, and return the line.
 				if (e.key == "Enter") {
-					let line = e.target.value;
+					let line = targetValue ? targetValue : e.target.value;
 					line = line.toUpperCase().trim();
 
 					lineReader.remove();
@@ -233,9 +262,10 @@ class SScreen {
 
 			// Current line input.
 			let line = null;
+			let lineNum = 0;
 			do {
 				// Print the current line's line number inline.
-				const lineNumStr = this._getReadLineNum(readLines.length);
+				const lineNumStr = this._getReadLineNum(lineNum);
 				await this.print(lineNumStr, { speed: 15, inline: true });
 
 				line = await this._readLine();
@@ -249,11 +279,30 @@ class SScreen {
 						while (readLines.length > 0) {
 							readLines.pop();
 						}
+						lineNum = 0;
 						this.clearSection(section);
 						break;
 
 					default:
-						readLines.push(line);
+						// If the last line ended with a &, we want to append this
+						// line to it instead of making it a new line.
+						// Also remove the & from the last line in that case.
+						const lastLineIndex = readLines.length - 1;
+						if (
+							readLines.length > 0 &&
+							readLines[lastLineIndex].endsWith("&")
+						) {
+							readLines[lastLineIndex] =
+								readLines[lastLineIndex].substr(
+									0,
+									readLines[lastLineIndex].length - 1
+								) + line;
+						} else {
+							readLines.push(line);
+						}
+
+						lineNum++;
+
 						break;
 				}
 			} while (
@@ -376,9 +425,9 @@ class SScreen {
 	 * @param {Promise} promise
 	 */
 	wait(promise, options = {}) {
-		// Cannot wait when muted.
+		// While muted, just return the promise.
 		if (this.isMuted) {
-			return;
+			return promise;
 		}
 
 		const inline = options["inline"] ?? false;

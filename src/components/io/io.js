@@ -133,6 +133,8 @@ class IOClass {
 
 	runCommand(command, args) {
 		switch (command) {
+			case "load":
+				return this.load();
 			case "list":
 				return this.list(args["path"]);
 			case "read":
@@ -146,6 +148,10 @@ class IOClass {
 			case "remove":
 				return this.remove(args["path"]);
 		}
+	}
+
+	load() {
+		this._createLS();
 	}
 
 	list(path = []) {

@@ -16,6 +16,8 @@ class GJApiClass {
 				});
 			case "data-store/get":
 				return this.executeRequest("data-store", { key: args.key });
+			case "check-auth":
+				return this.checkAuth(args.user, args.pass);
 		}
 	}
 
@@ -33,6 +35,16 @@ class GJApiClass {
 		}
 
 		return user.id;
+	}
+
+	async checkAuth(user, token) {
+		const response = await this.executeRequest("users/auth", {
+			username: user,
+			user_token: token,
+		});
+
+		const success = response.data.success === "true";
+		return success;
 	}
 
 	async executeRequest(endpoint, args) {

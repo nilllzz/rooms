@@ -11,14 +11,21 @@ class GJCredsClass {
 		this.userId = null;
 	}
 
-	async runCommand(command, _args) {
+	async runCommand(command, args) {
 		switch (command) {
+			case "write":
+				this.username = args.user;
+				this.token = args.token;
+				this.userId = args.id ?? null;
+			// No break, return same as "read".
 			case "read":
 				return {
 					user: this.username,
 					pass: this.token,
 					id: this.userId,
 				};
+			case "current-user-id":
+				return this.userId;
 		}
 	}
 
