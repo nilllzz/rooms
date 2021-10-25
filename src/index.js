@@ -181,4 +181,4 @@ GJCreds.init();
 // Start by showing auth.
 load("auth");
 //load("rooms/basement");
-// load("shutdown");
+//load("edit", { file: "/HOME/TEST.TXT" });

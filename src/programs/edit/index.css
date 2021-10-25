@@ -1,0 +1,85 @@
+body {
+	cursor: none;
+}
+
+.editor {
+	max-height: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.editor-lines {
+	flex-grow: 1;
+}
+
+.editor-line-container {
+	display: flex;
+}
+
+.editor-line-start {
+	margin-right: 4px;
+}
+
+.editor-line-start-selected {
+	background-color: var(--print-green);
+	color: black;
+}
+
+.editor-line-content {
+	text-transform: uppercase;
+	height: 24px;
+	white-space: nowrap;
+	width: 600px;
+	overflow-x: hidden;
+}
+
+.editor-line-input {
+	background-color: black;
+	border-style: none;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	text-shadow: inherit;
+	text-transform: uppercase;
+	padding: 0;
+	height: 24px;
+	width: 600px;
+	user-select: none;
+	cursor: inherit;
+	position: relative;
+	margin-top: -1px;
+}
+
+/* Removes blueish border around input element. */
+.editor-line-input:focus {
+	outline: none;
+}
+
+.editor-info-line {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.popup {
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.popup-title {
+	text-align: center;
+	margin-top: 8px;
+	margin-bottom: 24px;
+	text-transform: uppercase;
+}
+
+.popup-content {
+	flex-grow: 1;
+	text-transform: uppercase;
+	white-space: pre-wrap;
+	padding: 8px;
+}

@@ -147,6 +147,8 @@ class IOClass {
 				return this.mkDir(args["path"]);
 			case "remove":
 				return this.remove(args["path"]);
+			case "exists":
+				return this.exists(args["path"]);
 		}
 	}
 
@@ -311,6 +313,14 @@ class IOClass {
 
 		// Save after modifications were made.
 		this._saveLS();
+	}
+
+	exists(path = []) {
+		const obj = this._getObjForPath(path);
+		if (obj === null) {
+			return;
+		}
+		return obj.t;
 	}
 }
 

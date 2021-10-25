@@ -26,7 +26,7 @@ Terminal.LOADED_INSTRUCTIONS[__instr__run__name] = async function (prg, args) {
 		});
 	}
 
-	const programLines = programContent.split("\n");
+	const programLines = programContent.toUpperCase().split("\n");
 
 	// Append additional args to this instruction to the end of the first line
 	// of the new program.
@@ -35,8 +35,6 @@ Terminal.LOADED_INSTRUCTIONS[__instr__run__name] = async function (prg, args) {
 			programLines[0] += " " + args[i];
 		}
 	}
-
-	console.log(programLines);
 
 	const newPrg = new UserProgram(prg.terminal, programLines);
 	return newPrg.run();

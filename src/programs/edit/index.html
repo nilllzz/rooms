@@ -1,0 +1,22 @@
+<meta charset="utf-8" />
+
+<link rel="stylesheet" href="../../rsx/styles/common.css">
+<link rel="stylesheet" href="../../rsx/styles/crt.css">
+<link rel="stylesheet" href="../../components/screen/screen.css">
+<link rel="stylesheet" href="./index.css">
+
+<body class="crt crt-text frame-body" onclick="
+    const inputs = document.querySelectorAll('[data-screen-input]');
+    if (inputs.length > 0) {
+        inputs[0].focus();
+    }
+">
+    <div class="editor" id="editor">
+    </div>
+
+    <script lang="js" src="../../components/common.js"></script>
+    <script lang="js" src="../../components/screen/screen.js"></script>
+    <script lang="js" src="../../components/messaging/messaging.js"></script>
+
+    <script lang="js" src="./index.js"></script>
+</body>

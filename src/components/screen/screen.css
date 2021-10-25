@@ -14,14 +14,6 @@
 	word-break: break-all;
 }
 
-.screen-output-color-red {
-	color: red;
-}
-
-.screen-output-color-white {
-	color: rgb(180, 240, 180);
-}
-
 .screen-input {
 	background-color: black;
 	border-style: none;
@@ -51,4 +43,12 @@
 /* Removes blueish border around input element. */
 .screen-input:focus {
 	outline: none;
+}
+
+.screen-element-color-red {
+	color: red;
+}
+
+.screen-element-color-white {
+	color: rgb(180, 240, 180);
 }

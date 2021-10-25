@@ -11,6 +11,14 @@ class SScreen {
 	isMuted = false;
 
 	/**
+	 * The display color of new elements added to this screen.
+	 * @type string
+	 */
+	defaultColor = "green";
+
+	supportedColors = ["green", "red", "white"];
+
+	/**
 	 * @param {HTMLElement} $el The main "screen" element to be used for this screen.
 	 */
 	constructor($el) {
@@ -53,7 +61,7 @@ class SScreen {
 			? document.createElement("span")
 			: document.createElement("div");
 		outputEl.className = "screen-output";
-		outputEl.className += " screen-output-color-" + color;
+		outputEl.className += " screen-element-color-" + color;
 		outputEl.setAttribute("data-screen-output", "1");
 		return outputEl;
 	}
@@ -67,7 +75,7 @@ class SScreen {
 		let printSpeed = options["speed"] ?? 15;
 		const inline = options["inline"] ?? false;
 		const instant = options["instant"] ?? false;
-		const color = options["color"] ?? "green";
+		const color = options["color"] ?? this.defaultColor;
 
 		return new Promise((resolve) => {
 			let charIndex = 0;
@@ -139,6 +147,8 @@ class SScreen {
 	_readLine(options = {}) {
 		const length = options["length"] ?? 45;
 		const password = options["password"] ?? false;
+		const prevInput = options["input"] ?? "";
+		const color = options["color"] ?? this.defaultColor;
 
 		return new Promise(async (resolve) => {
 			// Create an "input" element to read text from until the user presses "Enter".
@@ -147,9 +157,11 @@ class SScreen {
 			lineReader.setAttribute("data-screen-input", "1");
 			lineReader.setAttribute("data-screen-reader", "1");
 			lineReader.className = "screen-input";
+			lineReader.className += " screen-element-color-" + color;
 			lineReader.type = "text";
 			lineReader.maxLength = length;
 			lineReader.style.width = length * 12.5 + "px";
+			lineReader.value = prevInput;
 
 			// Add the input to the current screen section.
 			const section = this._getCurrentSection();
@@ -218,6 +230,7 @@ class SScreen {
 		const prompt = options["prompt"] ?? "";
 		const length = options["length"] ?? 45;
 		const password = options["password"] ?? false;
+		const input = options["input"] ?? "";
 
 		// Create new section for the read operation.
 		this._addSection();
@@ -226,7 +239,7 @@ class SScreen {
 			// Print ":" prompt char.
 			await this.print(prompt + ": ", { speed: 15, inline: true });
 
-			const line = await this._readLine({ length, password });
+			const line = await this._readLine({ length, password, input });
 
 			if (cleanup) {
 				this.clearSection();
@@ -432,6 +445,7 @@ class SScreen {
 
 		const inline = options["inline"] ?? false;
 		const cleanup = options["cleanup"] ?? true;
+		const color = options["color"] ?? this.defaultColor;
 
 		const waitChars = ["\\", "-", "/", "|"];
 		// Prints to the current section.
@@ -444,6 +458,7 @@ class SScreen {
 			? document.createElement("span")
 			: document.createElement("div");
 		waitEl.className = "screen-wait";
+		waitEl.className += " screen-element-color-" + color;
 		waitEl.textContent = waitChars[elapsedTime % 4];
 
 		section.appendChild(waitEl);

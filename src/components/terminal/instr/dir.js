@@ -31,7 +31,7 @@ Terminal.LOADED_INSTRUCTIONS[__instr__dir__name] = async function (prg, args) {
 	});
 	const list = response;
 
-	const listTextItems = list.map((i) => i.n);
+	const listTextItems = list.map((i) => (i.t === "d" ? "/" + i.n : i.n));
 	listTextItems.unshift(".", "..");
 
 	const initial = Math.min(2, listTextItems.length - 1);

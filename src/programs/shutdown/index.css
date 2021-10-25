@@ -1,3 +1,7 @@
+body {
+	cursor: none;
+}
+
 .shutdown-message {
 	color: rgb(239, 131, 0);
 	height: 100%;
